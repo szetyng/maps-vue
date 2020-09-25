@@ -1,17 +1,10 @@
 <template>
   <div style="height: 500px; width: 100%">
     <div style="height: 200px overflow: auto;">
-      <p>First marker is placed at {{ withPopup.lat }}, {{ withPopup.lng }}</p>
       <p>Center is at {{ currentCenter }} and the zoom is: {{ currentZoom }}</p>
-      <button @click="showLongText">
-        Toggle long popup
-      </button>
-      <button @click="showMap = !showMap">
-        Toggle map
-      </button>
     </div>
+    <client-only>
     <l-map
-      v-if="showMap"
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
@@ -25,36 +18,14 @@
         :attribution="attribution"
         :options="{ maxZoom: 28 , maxNativeZoom: 18 }"
       />
-      <l-circle-marker
-        :lat-lng="circle.center"
-        :radius="circle.radius"
-        :color="circle.color"
-      />
-      <l-marker :lat-lng="withPopup">
-        <l-popup>
-          <div @click="innerClick">
-            I am a popup
-            <p v-show="showParagraph">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-              sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-              Donec finibus semper metus id malesuada.
-            </p>
-          </div>
-        </l-popup>
-      </l-marker>
-      <l-marker :lat-lng="withTooltip">
-        <l-tooltip :options="{ permanent: true, interactive: true }">
-          <div @click="innerClick">
-            I am a tooltip
-            <p v-show="showParagraph">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque
-              sed pretium nisl, ut sagittis sapien. Sed vel sollicitudin nisi.
-              Donec finibus semper metus id malesuada.
-            </p>
-          </div>
-        </l-tooltip>
-      </l-marker>
+      <l-geo-json 
+        :geojson="getTunnel"
+        :optionsStyle="{'color': 'ff7800'}"
+      ></l-geo-json>
+
     </l-map>
+    </client-only>
+    {{ getTunnel }}
   </div>
 </template>
 
@@ -62,7 +33,9 @@
 // import Logo from '~/components/Logo.vue'
 // import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import { latLng } from "leaflet";
-import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LCircleMarker } from 'vue2-leaflet';
+import { LMap, LTileLayer, LMarker, LPopup, LTooltip, LCircleMarker, LGeoJson } from 'vue2-leaflet';
+import s776Rings from '../assets/s776rings.json';
+import s777Rings from '../assets/s777rings.json';
 
 export default {
   components: {
@@ -71,7 +44,8 @@ export default {
     LMarker,
     LPopup,
     LTooltip, 
-    LCircleMarker
+    LCircleMarker,
+    LGeoJson
   },
   data() {
     return {
@@ -80,20 +54,14 @@ export default {
       url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution:
         '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      withPopup: latLng(3.129447222, 101.7170167),
-      withTooltip: latLng(3.129447222, 101.7170167),
       currentZoom: 11.5,
       currentCenter: latLng(3.129447222, 101.7170167),
-      showParagraph: false,
       mapOptions: {
         zoomSnap: 0.5
       },
-      showMap: true,
-      circle: {
-        center: [3.129447222, 101.7170167],
-        radius: 1,
-        color: 'red'
-      },
+      s776RingLoc: s776Rings,
+      s777RingLoc: s777Rings,
+      geojson: null
     };
   },
   methods: {
@@ -109,6 +77,57 @@ export default {
     innerClick() {
       alert("Click!");
     }
+  },
+  computed: {
+    getTunnel() {
+      // let tunnel = [
+      //   {
+      //     type: "Feature",
+      //     geometry: {
+      //       type: "Point",
+      //       coordinates: [101.7170167,  3.129447222]
+      //     }
+      //   }
+      // ]
+
+      // todo: retrieve geojson of this instead of calculating it on the fly everytime
+      let tunnel = this.s776RingLoc.map(ringObj => {
+        let featureObj = {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [ringObj.long, ringObj.lat]
+          },
+          properties: {
+            name: `R${ringObj.Ring}`
+
+          }
+        }
+        return featureObj
+      });
+
+      return tunnel
+    },
+
+    // getTunnel2() {
+    //   let tunnel = this.s777RingLoc.map(ringObj => {
+    //     let featureObj = {
+    //       type: "Feature",
+    //       geometry: {
+    //         type: "Point",
+    //         coordinates: latLng(ringObj.lat, ringObj.long)
+    //       },
+    //       properties: {
+    //         name: `R${ringObj.Ring}`
+
+    //       }
+    //     }
+    //     return featureObj
+    //   });
+
+      // return tunnel
+    // }
+  
   }
 }
 </script>

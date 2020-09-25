@@ -103,8 +103,8 @@
 import { fromLonLat } from 'ol/proj';
 import { pointerMove, singleClick } from 'ol/events/condition';
 import { findPointOnSurface } from 'vuelayers/lib/ol-ext'
-import s776Rings from '../assets/s776rings.json'
-import s777Rings from '../assets/s777rings.json'
+import s776Rings from '../assets/s776rings.json';
+import s777Rings from '../assets/s777rings.json';
 
 export default {
   data() {
