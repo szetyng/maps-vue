@@ -15,7 +15,7 @@
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
-      :maxZoom="19"
+      :maxZoom="28"
       style="height: 80%"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
@@ -23,7 +23,7 @@
       <l-tile-layer
         :url="url"
         :attribution="attribution"
-
+        :options="{ maxZoom: 28 , maxNativeZoom: 18 }"
       />
       <l-circle-marker
         :lat-lng="circle.center"
