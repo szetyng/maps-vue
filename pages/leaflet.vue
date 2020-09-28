@@ -20,12 +20,11 @@
       />
       <l-geo-json 
         :geojson="getTunnel"
-        :optionsStyle="{'color': 'ff7800'}"
+        :options="options"
       ></l-geo-json>
 
     </l-map>
     </client-only>
-    {{ getTunnel }}
   </div>
 </template>
 
@@ -127,6 +126,24 @@ export default {
 
       // return tunnel
     // }
+    options() {
+      var geojsonMarkerOptions = {
+        radius: 5,
+        fillColor: '#FF0000',
+        color: '#FF0000',
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 1
+      }
+
+
+
+      return {
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, geojsonMarkerOptions)
+        }
+      }
+    }
   
   }
 }
