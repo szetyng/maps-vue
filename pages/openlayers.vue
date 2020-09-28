@@ -1,5 +1,6 @@
 <template>
   <div>
+    <p>Center is at {{ center }} and the zoom is: {{ zoom }}</p>
     <v-btn @click="s776Show = !s776Show">
       Show S776
     </v-btn>

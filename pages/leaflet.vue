@@ -3,13 +3,21 @@
     <div style="height: 200px overflow: auto;">
       <p>Center is at {{ currentCenter }} and the zoom is: {{ currentZoom }}</p>
     </div>
+
+    <v-btn @click="s776Show = !s776Show">
+      Show S776
+    </v-btn>
+    <v-btn @click="s777Show = !s777Show">
+      Show S777
+    </v-btn>
+
     <client-only>
     <l-map
       :zoom="zoom"
       :center="center"
       :options="mapOptions"
       :maxZoom="28"
-      style="height: 80%"
+      style="height: 600px"
       @update:center="centerUpdate"
       @update:zoom="zoomUpdate"
     >
@@ -19,7 +27,13 @@
         :options="{ maxZoom: 28 , maxNativeZoom: 18 }"
       />
       <l-geo-json 
+        v-if="s776Show"
         :geojson="getTunnel"
+        :options="options"
+      ></l-geo-json>
+      <l-geo-json 
+        v-if="s777Show"
+        :geojson="getTunnel2"
         :options="options"
       ></l-geo-json>
 
@@ -60,7 +74,9 @@ export default {
       },
       s776RingLoc: s776Rings,
       s777RingLoc: s777Rings,
-      geojson: null
+      geojson: null,
+      s776Show: true,
+      s777Show: false
     };
   },
   methods: {
@@ -108,24 +124,25 @@ export default {
       return tunnel
     },
 
-    // getTunnel2() {
-    //   let tunnel = this.s777RingLoc.map(ringObj => {
-    //     let featureObj = {
-    //       type: "Feature",
-    //       geometry: {
-    //         type: "Point",
-    //         coordinates: latLng(ringObj.lat, ringObj.long)
-    //       },
-    //       properties: {
-    //         name: `R${ringObj.Ring}`
+    getTunnel2() {
+      let tunnel = this.s777RingLoc.map(ringObj => {
+        let featureObj = {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [ringObj.long, ringObj.lat]
+          },
+          properties: {
+            name: `R${ringObj.Ring}`
 
-    //       }
-    //     }
-    //     return featureObj
-    //   });
+          }
+        }
+        return featureObj
+      });
 
-      // return tunnel
-    // }
+      return tunnel
+    },
+
     options() {
       var geojsonMarkerOptions = {
         radius: 5,
@@ -136,12 +153,20 @@ export default {
         fillOpacity: 1
       }
 
+      function onEach(feature, layer) {
+        let ringInfo = feature.properties.name;
+        ringInfo += "<br>Other stuff that I can add to everyone"
+
+        return layer.bindPopup(ringInfo)
+      }
+
 
 
       return {
         pointToLayer: function (feature, latlng) {
           return L.circleMarker(latlng, geojsonMarkerOptions)
-        }
+        },
+        onEachFeature: onEach
       }
     }
   
