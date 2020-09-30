@@ -16,7 +16,7 @@
 
       <vl-interaction-select :features.sync="selectedFeatures" :condition="featureSelect">
         <template slot-scope="select">
-          <vl-style-box>
+          <!-- <vl-style-box>
             <vl-style-stroke color="#423e9e" :width="7"></vl-style-stroke>
             <vl-style-fill :color="[254, 178, 76, 0.7]"></vl-style-fill>
             <vl-style-circle :radius="5">
@@ -24,41 +24,19 @@
               <vl-style-fill :color="[254, 178, 76, 0.7]"></vl-style-fill>
             </vl-style-circle>
           </vl-style-box>
+
           <vl-style-box :z-index="1">
             <vl-style-stroke color="#d43f45" :width="2"></vl-style-stroke>
             <vl-style-circle :radius="5">
               <vl-style-stroke color="#d43f45" :width="2"></vl-style-stroke>
             </vl-style-circle>
-          </vl-style-box>
+          </vl-style-box> -->
 
           <vl-overlay class="feature-popup" v-for="feature in select.features" :key="feature.id" :id="feature.id"
                       :position="pointOnSurface(feature.geometry)" :auto-pan="true" :auto-pan-animation="{ duration: 300 }">
-            <template slot-scope="popup">
               <section class="card">
-                <header class="card-header">
-                  <p class="card-header-title">
-                    Feature ID {{ feature.id }}
-                  </p>
-                  <a class="card-header-icon" title="Close"
-                     @click="selectedFeatures = selectedFeatures.filter(f => f.id !== feature.id)">
-                    <v-icon icon="mdi-close"></v-icon>
-                  </a>
-                </header>
-                <div class="card-content">
-                  <div class="content">
-                    <p>
-                      Overlay popup content for Feature with ID <strong>{{ feature.id }}</strong>
-                    </p>
-                    <p>
-                      Popup: {{ JSON.stringify(popup) }}
-                    </p>
-                    <p>
-                      Feature: {{ JSON.stringify({ id: feature.id, properties: feature.properties }) }}
-                    </p>
-                  </div>
-                </div>
+                Feature: {{  feature.properties.name }}
               </section>
-            </template>
           </vl-overlay>
 
         </template>
@@ -66,12 +44,13 @@
 
       <vl-layer-vector v-if="s776Show">
         <vl-source-vector :features="getTunnel"></vl-source-vector>
-        <vl-style-box>
+        <vl-style-func :factory="pointsStyleFunc" />
+        <!-- <vl-style-box>
           <vl-style-circle :radius="5">
             <vl-style-fill color="blue"></vl-style-fill>
             <vl-style-stroke color="blue"></vl-style-stroke>
           </vl-style-circle>
-          </vl-style-box>
+          </vl-style-box> -->
       </vl-layer-vector>
       
       <vl-layer-vector v-if="s777Show">
@@ -94,14 +73,13 @@
           </vl-style-box>
       </vl-feature> -->
     </vl-map>
-    Selected feature: {{ selectedFeatures }} 
-    <br>
-    Hovered feature [disabled]: {{ hoveredFeatures }}
+
   </div>
 </template>
 
 <script>
 import { fromLonLat } from 'ol/proj';
+import { Style, Circle, Stroke, Fill } from 'ol/style';
 import { pointerMove, singleClick } from 'ol/events/condition';
 import { findPointOnSurface } from 'vuelayers/lib/ol-ext'
 import s776Rings from '../assets/s776rings.json';
@@ -124,13 +102,40 @@ export default {
       s777Show: false
     }
   },
-  mounted() {
-    console.log(s776Rings[0])
-  },
   methods: {
-    pointOnSurface: findPointOnSurface
+    pointOnSurface: findPointOnSurface,
+    // maybe your style format is wrong 
+    pointsStyleFunc() {
+      return feature => {
+        let st = new Style({
+          image: new Circle({
+            radius: 5,
+            stroke: new Stroke({
+              color: '#FF0000',
+              width: 1.25
+            }),
+            fill: new Fill({
+              color: '#FF0000'
+            })
+          })
+        })
+
+
+        // let st = new Style({
+        //   radius: 5,
+        //   fillColor: '#FF0000',
+        //   color: '#FF0000',
+        //   weight: 1,
+        //   opacity: 1,
+        //   fillOpacity: 1
+        // })
+
+        return [st]
+      }
+    },
   },
   computed: {
+
     getTunnel() {
       // todo: retrieve geojson of this instead of calculating it on the fly everytime
       let tunnel = this.s776RingLoc.map(ringObj => {
