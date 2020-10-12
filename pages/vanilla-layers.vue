@@ -6,7 +6,11 @@
     <v-btn @click="toggle777">
       Show S777
     </v-btn>
-    <div id="map" class="map"></div>
+
+    Hello {{ selectedFeature }}
+    <div id="map" class="map">
+      <div id="popup"></div>
+    </div>
   </div>
 </template>
 
@@ -19,6 +23,9 @@ import { OSM, Vector as VectorSource } from "ol/source";
 import { fromLonLat } from "ol/proj";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
+import Overlay from 'ol/Overlay';
+import Select from 'ol/interaction/Select';
+import {altKeyOnly, click, pointerMove} from 'ol/events/condition';
 
 import s776Rings from "../assets/s776.json";
 import s777Rings from "../assets/s777.json";
@@ -33,6 +40,7 @@ export default {
       mymap: null,
       layer776: null,
       layer777: null,
+      selectedFeature: null
     };
   },
   methods: {
