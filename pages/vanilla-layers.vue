@@ -20,10 +20,11 @@ import "ol/ol.css";
 import { Map, View } from "ol";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { OSM, Vector as VectorSource } from "ol/source";
-import { fromLonLat } from "ol/proj";
+import { fromLonLat, toLonLat } from "ol/proj";
 import { Circle as CircleStyle, Fill, Stroke, Style, Text } from "ol/style";
 import GeoJSON from "ol/format/GeoJSON";
 import Overlay from 'ol/Overlay';
+import {toStringHDMS} from 'ol/coordinate';
 import Select from 'ol/interaction/Select';
 import {altKeyOnly, click, pointerMove} from 'ol/events/condition';
 
@@ -129,7 +130,6 @@ export default {
   },
 
   mounted() {
-
     // map.addLayer(layer776);
     // map.render();
 
@@ -146,12 +146,34 @@ export default {
       }),
     });
 
+    var popup = new Overlay({
+      element: document.getElementById('popup'),
+    });
+    map.addOverlay(popup);
+    var element = popup.getElement();
+
+    var select = new Select(); // ref to currently selected interaction
+
+
+    if (select !== null) {
+      map.addInteraction(select);
+      select.on("select", function (e) {
+        let coords = e.selected[0].getGeometry().getCoordinates();
+        var hdms = toStringHDMS(toLonLat(coords));
+        popup.setPosition(coords);
+        document.getElementById("popup").innerHTML = `This is ${e.target.getFeatures().item(0).getProperties().name}`
+
+
+        
+
+
+      });
+    }
+
 
 
     this.mymap = map;
     this.draw776();
-
-    
   },
 };
 </script>
@@ -160,5 +182,9 @@ export default {
 <style scoped>
 .map {
   height: 600px;
+}
+
+.popup {
+  min-width: 276px;
 }
 </style>
