@@ -9,7 +9,10 @@
 
     Hello {{ selectedFeature }}
     <div id="map" class="map">
-      <div id="popup"></div>
+      <v-card id="popup">
+        <v-card-title id="pop-title" class="pop-title">This is title</v-card-title>
+        <v-card-text id="pop-text">This is text</v-card-text>
+      </v-card>
     </div>
   </div>
 </template>
@@ -161,7 +164,9 @@ export default {
         let coords = e.selected[0].getGeometry().getCoordinates();
         var hdms = toStringHDMS(toLonLat(coords));
         popup.setPosition(coords);
-        document.getElementById("popup").innerHTML = `This is ${e.target.getFeatures().item(0).getProperties().name}`
+        document.getElementById("pop-title").innerHTML = "This is title"
+        document.getElementById("pop-text").innerHTML = 
+          `This is ${e.target.getFeatures().item(0).getProperties().name}`
 
 
         
@@ -186,5 +191,9 @@ export default {
 
 .popup {
   min-width: 276px;
+}
+
+.pop-title {
+  color: red;
 }
 </style>
