@@ -36,7 +36,8 @@ export default {
       s777geojson: s777Rings,
       s777Show: false,
       s777Layer: null,
-      popup: null
+      popup: null,
+      info: null
     };
   },
 
@@ -50,7 +51,7 @@ export default {
         opacity: 1,
         fillOpacity: 1,
       };
-
+      var info = this.info;
       function ptl(feature, latlng) {
         let marker = L.circleMarker(latlng, geojsonMarkerOptions);
 
@@ -59,6 +60,8 @@ export default {
 
       function eachFeature(feature, layer) {
         let popupContent = `<b>${feature.properties.name}</b><br>I am a popup. <a href="plot-leaflet.com">Gooooo</a>`
+        
+        info.update(layer.feature.properties);
         
         layer.bindPopup(popupContent);
       }
@@ -109,7 +112,23 @@ export default {
       maxNativeZoom: 18,
     }).addTo(mymap);
 
-    this.toggle776();
+    let info = L.control();
+    info.onAdd = function(map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div
+    }
+
+    info.update = function(props) {
+      console.log('am i not being called?')
+      this._div.innerHTML = "<h4>Hello</h4>" + (props ? props.name : "HEHEHE")
+    };
+
+    info.addTo(mymap);
+
+    this.info = info;
+
+    //this.toggle776();
   },
 };
 </script>
@@ -122,5 +141,18 @@ export default {
 
 #graphid {
   height: 600px;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+.info h4 {
+    margin: 0 0 5px;
+    color: #777;
 }
 </style>

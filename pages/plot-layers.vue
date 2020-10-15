@@ -125,9 +125,14 @@ export default {
       let element = popup.getElement();
       let select = new Select();
 
+      this.cardText = "hai"
+
       if (select !== null) {
         this.mymap.addInteraction(select);
-        select.on("select", function (e) {
+
+        select.on("select", e => {
+          console.log('im called again :D')
+          this.cardText = "feature is selected HEHE"
           let coords = e.selected[0].getGeometry().getCoordinates();
           var hdms = toStringHDMS(toLonLat(coords));
           popup.setPosition(coords);
@@ -136,13 +141,18 @@ export default {
             `This is ${e.target.getFeatures().item(0).getProperties().name}`
           let btn = document.getElementById("pop-btn");
 
-          btn.onclick = function hehe() {
-            console.log('hehe')
-            this.hello();
+          btn.onclick = () => {
+            this.cardText = 'button is clicked HEHE'
+            
           }
-          
+
         });
       }
+
+
+
+
+
     }
   },
 
@@ -160,33 +170,19 @@ export default {
       })
     })
 
-    // let popup = new Overlay({
-    //   element: document.getElementById('popup'),
-    // });
-    // map.addOverlay(popup);
 
-    // let element = popup.getElement();
-    // let select = new Select();
-
-    // if (select !== null) {
-    //   map.addInteraction(select);
-    //   select.on("select", function (e) {
-    //     let coords = e.selected[0].getGeometry().getCoordinates();
-    //     var hdms = toStringHDMS(toLonLat(coords));
-    //     popup.setPosition(coords);
-    //     document.getElementById("pop-title").innerHTML = "This is title"
-    //     document.getElementById("pop-text").innerHTML = 
-    //       `This is ${e.target.getFeatures().item(0).getProperties().name}`
-    //     let btn = document.getElementById("pop-btn");
-
-    //     btn.onclick = function hi() {
-    //       console.log('YESS')
-    //     }
-        
+    // map.on('click', function(e) {
+    //   console.log('i am called :(')
+    //   this.cardText = "YES?? AM I??"
+    //   var feature = map.forEachFeatureAtPixel(e.pixel, function(feature, layer) {
+    //     return feature
     //   });
-    // }
 
-
+    //   if (feature) {
+    //     console.log('HELOO')
+    //     this.cardText = "YES??"
+    //   }
+    // })
 
 
 
