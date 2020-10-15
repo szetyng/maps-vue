@@ -112,8 +112,8 @@ export default {
         this.mymap.removeLayer(this.s777Layer);
       }
     },
-    hello() {
-      console.log('whaddup')
+    hello(r) {
+      console.log('whaddup', r)
     },
 
     initOverlay() {
@@ -142,7 +142,7 @@ export default {
           let btn = document.getElementById("pop-btn");
 
           btn.onclick = () => {
-            this.cardText = 'button is clicked HEHE'
+            this.hello(e.target.getFeatures().item(0).getProperties().name)
             
           }
 
